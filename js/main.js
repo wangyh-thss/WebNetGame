@@ -1,36 +1,36 @@
 window.onload = function() {
 
-    function creatNewTank(imgDom, context) {
-        var player = Tank.createNew();
-        var painter = TankPainter.createNew(player, imgDom, context);
-        var returnObj = {
-            'player': player,
-            'painter': painter
-        };
-        return returnObj;
-    }
-
     function refreshCanvas() {
         context.clearRect(0, 0, 500, 500);
+        map.renderMaze();
         for (var i = 0; i < playerArray.length; i++) {
             playerArray[i].painter.draw();
         }
         bulletsPainter.draw();
     }
 
+
+    function timerEvent() {
+        refreshCanvas();
+    }
+
     function getYourPlayer() { //to be modified
         return playerArray[0].player;
     }
 
-    var context = document.getElementById('_canvas').getContext('2d');
-    var playerArray = new Array();
-    var player1 = creatNewTank(document.getElementById('player1'), context);
+    var canvas = document.getElementById('_canvas');
+    context = canvas.getContext('2d');
+
+    map = Map.createNew(canvas, context);
+
+    playerArray = new Array();
+    var player1 = creatNewTank(map.player1X, map.player1Y, document.getElementById('player1'), context);
     playerArray.push(player1);
 
     var bulletArray = new Array();
     var bulletsPainter = BulletsPainter.createNew(bulletArray, context);
 
-    var painterTimer = setInterval(refreshCanvas, 40);
+    var painterTimer = setInterval(timerEvent, 25);
 
     var player = getYourPlayer();
 

@@ -1,30 +1,40 @@
 var Tank = {
-    'createNew': function() {
+    'createNew': function(posX, posY) {
         var tank = {
             'angle': 0,
             'bulletRemain': 5,
-            'posX': 200,
-            'posY': 200,
+            'posX': posX,
+            'posY': posY,
             'rotateSpeed': (18 / 360) * Math.PI,
             'rotateTimer': null,
             'runSpeed': 5,
-            'runTimer': null
+            'runTimer': null,
+            'height': 0,
+            'width': 0
         };
+
+        console.log(posX, posY);
 
         tank.run = function(forward) {
             //图正面朝向下方
             var tankObj = this;
+            if(!tankObj.tempAngle) {
+                tankObj.tempAngle = tankObj.angle;
+            }
             function runStep() {
                 if (forward) {
-                    var tempX = Math.round(tankObj.posX - tankObj.runSpeed * Math.sin(tankObj.angle));
-                    var tempY = Math.round(tankObj.posY + tankObj.runSpeed * Math.cos(tankObj.angle));
+                    tankObj.tempX = Math.round(tankObj.posX - tankObj.runSpeed * Math.sin(tankObj.angle));
+                    tankObj.tempY = Math.round(tankObj.posY + tankObj.runSpeed * Math.cos(tankObj.angle));
                 } else {
-                    var tempX = Math.round(tankObj.posX + tankObj.runSpeed * Math.sin(tankObj.angle));
-                    var tempY = Math.round(tankObj.posY - tankObj.runSpeed * Math.cos(tankObj.angle));
+                    tankObj.tempX = Math.round(tankObj.posX + tankObj.runSpeed * Math.sin(tankObj.angle) * 0.5);
+                    tankObj.tempY = Math.round(tankObj.posY - tankObj.runSpeed * Math.cos(tankObj.angle) * 0.5);
                 }
-                if (true) { //位置合法性检测
-                    tankObj.posX = tempX;
-                    tankObj.posY = tempY;
+                if (!testCollisionTankMap1(tankObj, map)) { //位置合法性检测
+                    tankObj.posX = tankObj.tempX;
+                    tankObj.posY = tankObj.tempY;
+                } else {
+                    tankObj.tempX = tankObj.posX;
+                    tankObj.tempY = tankObj.posY;
                 }
             }
 
@@ -42,20 +52,26 @@ var Tank = {
 
         tank.rotate = function(clockwise) {
             var tankObj = this;
+            if(!tankObj.tempX || !tankObj.tempY){
+                tankObj.tempX = tankObj.posX;
+                tankObj.tempY = tankObj.posY;
+            }
             function rotateStep() {
                 if (clockwise) {
-                    var tempAngle = tankObj.angle + tankObj.rotateSpeed;
+                    tankObj.tempAngle = tankObj.angle + tankObj.rotateSpeed;
                 } else {
-                    var tempAngle = tankObj.angle - tankObj.rotateSpeed;
+                    tankObj.tempAngle = tankObj.angle - tankObj.rotateSpeed;
                 }
-                if (true) { //合法性判断
-                    if (tempAngle > 2 * Math.PI) {
-                        tankObj.angle = tempAngle - 2 * Math.PI;
-                    } else if (tempAngle < 0) {
-                        tankObj.angle = tempAngle + 2 * Math.PI;
+                if (!testCollisionTankMap1(tankObj, map)) { //合法性判断
+                    if (tankObj.tempAngle > 2 * Math.PI) {
+                        tankObj.angle = tankObj.tempAngle - 2 * Math.PI;
+                    } else if (tankObj.tempAngle < 0) {
+                        tankObj.angle = tankObj.tempAngle + 2 * Math.PI;
                     } else {
-                        tankObj.angle = tempAngle;
+                        tankObj.angle = tankObj.tempAngle;
                     }
+                } else {
+                    tankObj.tempAngle = tankObj.angle;
                 }
             }
 
@@ -84,8 +100,9 @@ var Tank = {
         };
 
         tank.reload = function(bulletArray) {
-            console.log('reload');
-            bulletArray.pop();
+            bulletArray[0].destory();
+            delete bulletArray[0];
+            bulletArray.shift();
             this.bulletRemain++;
         };
 
@@ -101,10 +118,8 @@ var TankPainter = {
     'createNew': function(tank, img, context) {
         var painter = {
             'context': context,
-            'height': img.height || 0,
-            'img': img,
+            'img': null,
             'tankObj': tank,
-            'width': img.width || 0
         };
 
         painter.setTankObj = function(tank) {
@@ -113,6 +128,8 @@ var TankPainter = {
 
         painter.setImg = function(img) {
             this.img = img;
+            this.tankObj.height = img.height || 0;
+            this.tankObj.width = img.width || 0;
         };
 
         painter.setContext = function(context) {
@@ -125,16 +142,24 @@ var TankPainter = {
             var transY = Math.round(this.tankObj.posY);
             this.context.translate(transX, transY);
             this.context.rotate(this.tankObj.angle);
-            this.context.drawImage(this.img, Math.round(-0.5 * this.width), Math.round(-0.5 * this.height));
+            this.context.drawImage(this.img, Math.round(-0.5 * this.tankObj.width), Math.round(-0.5 * this.tankObj.height));
             this.context.restore();
         };
-
+        painter.setImg(img);
         return painter;
     }
 }
 
 
-
+function creatNewTank(posX, posY, imgDom, context) {
+    var player = Tank.createNew(posX, posY);
+    var painter = TankPainter.createNew(player, imgDom, context);
+    var returnObj = {
+        'player': player,
+        'painter': painter
+    };
+    return returnObj;
+}
 
 
 
