@@ -174,8 +174,8 @@ io.on('connection', function (socket) {
     } else {
         return;
     }
-    socket.on('fire', function(player) {
-        io.emit('fire', player);
+    socket.on('fire', function(id) {
+        socket.broadcast.emit('fire', id);
     });
 
     socket.on('pos', function(data) {

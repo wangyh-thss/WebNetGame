@@ -33,8 +33,8 @@ window.onload = function() {
     var player;
 
     var socket = io();
-    socket.on('fire', function() {
-        player.fire(bulletArray);
+    socket.on('fire', function(id) {
+        playerArray[id].player.fire(bulletArray);
     });
 
     var id;
@@ -62,7 +62,7 @@ window.onload = function() {
         var keyCode = e.keyCode || e.which;
         switch (keyCode) {
             case 32:
-                socket.emit('fire', player);
+                socket.emit('fire', id);
                 player.fire(bulletArray);
                 break;
             case 38:
@@ -111,10 +111,22 @@ window.onload = function() {
             case 38:
             case 40:
                 player.stopRun();
+                socket.emit('pos', {
+                    'posX': player.posX,
+                    'posY': player.posY,
+                    'angle': player.angle,
+                    'id': id
+                });
                 break;
             case 37:
             case 39:
                 player.stopRotate();
+                socket.emit('pos', {
+                    'posX': player.posX,
+                    'posY': player.posY,
+                    'angle': player.angle,
+                    'id': id
+                });
                 break;
         }
     };
