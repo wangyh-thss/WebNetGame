@@ -34,11 +34,17 @@ window.onload = function() {
 
     var player = getYourPlayer();
 
+    var socket = io();
+    socket.on('fire', function() {
+        player.fire(bulletArray);
+    });
+
     document.onkeydown = function(event) {
         var e = event || window.event;
         var keyCode = e.keyCode || e.which;
         switch (keyCode) {
             case 32:
+                socket.emit('fire', player);
                 player.fire(bulletArray);
                 break;
             case 38:
@@ -54,9 +60,9 @@ window.onload = function() {
                 player.run(false);
                 break;
         }
-    }
+    };
 
-    document.onkeyup = function() {
+    document.onkeyup = function(event) {
         var e = event || window.event;
         var keyCode = e.keyCode || e.which;
         switch (keyCode) {
@@ -69,7 +75,7 @@ window.onload = function() {
                 player.stopRotate();
                 break;
         }
-    }
-}
+    };
+};
 
 
