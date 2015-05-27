@@ -63,10 +63,10 @@ function testCollisionBulletTank(bullet, tank) {
 
 function testCollisionTankMap1(tank, map) {
     function rotatePoint(point, angle, centerPoint) {
-        var x = point.x - centerPoint.x;
-        var y = point.y - centerPoint.y;
-        x = x * Math.cos(angle) - y * Math.sin(angle);
-        y = x * Math.sin(angle) + y * Math.cos(angle);
+        var oldX = point.x - centerPoint.x;
+        var oldY= point.y - centerPoint.y;
+        var x = oldX * Math.cos(angle) - oldY * Math.sin(angle);
+        var y = oldX * Math.sin(angle) + oldY * Math.cos(angle);
         x = Math.round(x + centerPoint.x);
         y = Math.round(y + centerPoint.y)
         return {
@@ -80,20 +80,20 @@ function testCollisionTankMap1(tank, map) {
         'y': tank.tempY
     }
     var point1 = rotatePoint({
-        'x': tank.tempX - tank.width * 0.5,
-        'y': tank.tempY - tank.height * 0.5
+        'x': Math.round(tank.tempX - tank.width * 0.5),
+        'y': Math.round(tank.tempY - tank.height * 0.5)
     }, tank.tempAngle, center);
     var point2 = rotatePoint({
-        'x': tank.tempX + tank.width * 0.5,
-        'y': tank.tempY - tank.height * 0.5
+        'x': Math.round(tank.tempX + tank.width * 0.5),
+        'y': Math.round(tank.tempY - tank.height * 0.5)
     }, tank.tempAngle, center);
     var point3 = rotatePoint({
-        'x': tank.tempX - tank.width * 0.5,
-        'y': tank.tempY + tank.height * 0.5
+        'x': Math.round(tank.tempX + tank.width * 0.5),
+        'y': Math.round(tank.tempY + tank.height * 0.5)
     }, tank.tempAngle, center);
     var point4 = rotatePoint({
-        'x': tank.tempX + tank.width * 0.5,
-        'y': tank.tempY + tank.height * 0.5
+        'x': Math.round(tank.tempX - tank.width * 0.5),
+        'y': Math.round(tank.tempY + tank.height * 0.5)
     }, tank.tempAngle, center);
 
     var left = Math.min(point1.x, point2.x, point3.x, point4.x);
@@ -101,77 +101,99 @@ function testCollisionTankMap1(tank, map) {
     var top = Math.min(point1.y, point2.y, point3.y, point4.y);
     var bottom = Math.max(point1.y, point2.y, point3.y, point4.y);
 
-    var node = map.getNode(center.x, center.y);
-    if ((node.value & Maze.Direction.W) !== Maze.Direction.W) {
-        if (left - node.x * map.cellW <= 0 && left - node.x * map.cellW >= -5) {
+    var nodeCenter = map.getNode(center.x, center.y);
+    if ((nodeCenter.value & Maze.Direction.W) !== Maze.Direction.W) {
+        if (left - nodeCenter.x * map.cellW <= 0 && left - nodeCenter.x * map.cellW >= -5) {
             return true;
         }
     }
-    if ((node.value & Maze.Direction.N) !== Maze.Direction.N) {
-        if (top - node.y * map.cellH <= -1 && top - node.y * map.cellH >= -6) {
+    if ((nodeCenter.value & Maze.Direction.N) !== Maze.Direction.N) {
+        if (top - nodeCenter.y * map.cellH <= 0 && top - nodeCenter.y * map.cellH >= -5) {
             return true;
         }
     }
-    if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
-        if ((node.x + 1) * map.cellW - right <= 0 && (node.x + 1) * map.cellW - right >= -5) {
+    if ((nodeCenter.value & Maze.Direction.E) !== Maze.Direction.E) {
+        if ((nodeCenter.x + 1) * map.cellW - right <= 0 && (nodeCenter.x + 1) * map.cellW - right >= -5) {
             return true;
         }
     }
-    if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
-        if ((node.y + 1) * map.cellH - bottom <= -1 && (node.y + 1) * map.cellH - bottom >= -6) {
-            return true;
-        }
-    }
-
-    /*
-    var node = map.getNode(left+3, top+3);
-    if ((node.value & Maze.Direction.W) !== Maze.Direction.W) {
-        if (left - node.x * map.cellW <= 0 && left - node.x * map.cellW >= -3) {
-            return true;
-        }
-    }
-    if ((node.value & Maze.Direction.N) !== Maze.Direction.N) {
-        if (top - node.y * map.cellH <= -1 && top - node.y * map.cellH >= -3) {
+    if ((nodeCenter.value & Maze.Direction.S) !== Maze.Direction.S) {
+        if ((nodeCenter.y + 1) * map.cellH - bottom <= 0 && (nodeCenter.y + 1) * map.cellH - bottom >= -5) {
             return true;
         }
     }
 
-    node = map.getNode(left+3, bottom-3);
-    if ((node.value & Maze.Direction.W) !== Maze.Direction.W) {
-        if (left - node.x * map.cellW <= 0 && left - node.x * map.cellW >= -3) {
-            return true;
-        }
-    }
-    if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
-        if ((node.y + 1) * map.cellH - bottom <= -1 && (node.y + 1) * map.cellH - bottom >= -3) {
-            return true;
+    var node1 = map.getNode(point1.x, point1.y), node2 = map.getNode(point2.x, point2.y), node;
+    if (node1 != node2) {
+        if(node1.x === node2.x) {
+            var node = node1.y > node2.y ? node2 : node1;
+            if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
+                return true;
+            }
+        } else if (node1.y === node2.y) {
+            var node = node1.x > node2.x ? node2 : node1;
+            if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
+                return true;
+            }
+        } else if (node1 !== nodeCenter && node2 !==nodeCenter) {
+
         }
     }
 
-    node = map.getNode(right-3, top+3);
-    if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
-        if ((node.x + 1) * map.cellW - right <= 0 && (node.x + 1) * map.cellW - right >= -3) {
-            return true;
-        }
-    }
-    if ((node.value & Maze.Direction.N) !== Maze.Direction.N) {
-        if (top - node.y * map.cellH <= -1 && top - node.y * map.cellH >= -3) {
-            return true;
+    node1 = map.getNode(point3.x, point3.y);
+    node2 = map.getNode(point4.x, point4.y);
+    if (node1 != node2) {
+        if(node1.x === node2.x) {
+            var node = node1.y > node2.y ? node2 : node1;
+            if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
+                return true;
+            }
+        } else if (node1.y === node2.y) {
+            var node = node1.x > node2.x ? node2 : node1;
+            if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
+                return true;
+            }
+        } else if (node1 !== nodeCenter && node2 !==nodeCenter) {
+
         }
     }
 
-    node = map.getNode(right-3, bottom-3);
-    if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
-        if ((node.x + 1) * map.cellW - right <= 0 && (node.x + 1) * map.cellW - right >= -3) {
-            return true;
+    node1 = map.getNode(point1.x, point1.y);
+    node2 = map.getNode(point4.x, point4.y);
+    if (node1 != node2) {
+        if(node1.x === node2.x) {
+            var node = node1.y > node2.y ? node2 : node1;
+            if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
+                return true;
+            }
+        } else if (node1.y === node2.y) {
+            var node = node1.x > node2.x ? node2 : node1;
+            if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
+                return true;
+            }
+        } else if (node1 !== nodeCenter && node2 !==nodeCenter) {
+
         }
     }
-    if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
-        if ((node.y + 1) * map.cellH - bottom <= -1 && (node.y + 1) * map.cellH - bottom >= -3) {
-            return true;
+
+    node1 = map.getNode(point3.x, point3.y);
+    node2 = map.getNode(point2.x, point2.y);
+    if (node1 != node2) {
+        if(node1.x === node2.x) {
+            var node = node1.y > node2.y ? node2 : node1;
+            if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
+                return true;
+            }
+        } else if (node1.y === node2.y) {
+            var node = node1.x > node2.x ? node2 : node1;
+            if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
+                return true;
+            }
+        } else if (node1 !== nodeCenter && node2 !==nodeCenter) {
+
         }
     }
-    */
+
     return false;
 }
 

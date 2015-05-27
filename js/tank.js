@@ -29,7 +29,7 @@ var Tank = {
                     tankObj.tempX = Math.round(tankObj.posX + tankObj.runSpeed * Math.sin(tankObj.angle) * 0.5);
                     tankObj.tempY = Math.round(tankObj.posY - tankObj.runSpeed * Math.cos(tankObj.angle) * 0.5);
                 }
-                if (!testCollisionTankMap(tankObj, context)) { //位置合法性检测
+                if (!testCollisionTankMap1(tankObj, map)) { //位置合法性检测
                     tankObj.posX = tankObj.tempX;
                     tankObj.posY = tankObj.tempY;
                 } else {
@@ -62,7 +62,7 @@ var Tank = {
                 } else {
                     tankObj.tempAngle = tankObj.angle - tankObj.rotateSpeed;
                 }
-                if (!testCollisionTankMap(tankObj, context)) { //合法性判断
+                if (!testCollisionTankMap1(tankObj, map)) { //合法性判断
                     if (tankObj.tempAngle > 2 * Math.PI) {
                         tankObj.angle = tankObj.tempAngle - 2 * Math.PI;
                     } else if (tankObj.tempAngle < 0) {
