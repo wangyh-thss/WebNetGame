@@ -16,18 +16,14 @@ window.onload = function() {
         refreshCanvas();
     }
 
-    function getYourPlayer() { //to be modified
-        return playerArray[0].player;
+    function getYourPlayer(id) { //to be modified
+        return playerArray[id].player;
     }
 
     var canvas = document.getElementById('_canvas');
     context = canvas.getContext('2d');
 
-    canvas.width = window.innerHeight - 20;
-    canvas.height = window.innerHeight - 20;
-
     playerArray = new Array();
-    var player1;
 
     var bulletArray = new Array();
     var bulletsPainter = BulletsPainter.createNew(bulletArray, context);
@@ -37,15 +33,28 @@ window.onload = function() {
     var player;
 
     var socket = io();
-    socket.on('fire', function() {
-        player.fire(bulletArray);
+    socket.on('fire', function(id) {
+        playerArray[id].player.fire(bulletArray);
     });
 
-    socket.on('maze', function(maze) {
-        map = Map.createNew(canvas, context, maze);
-        player1 = creatNewTank(map.player1X, map.player1Y, document.getElementById('player1'), context)
-        playerArray.push(player1);
-        player = getYourPlayer();
+    var id;
+
+    socket.on('init', function(data) {
+        if (!map) {
+            map = Map.createNew(canvas, context, data.maze);
+            player = creatNewTank(map.player1X, map.player1Y, document.getElementById('player1'), context);
+            playerArray.push(player);
+            player = creatNewTank(map.player2X, map.player2Y, document.getElementById('player2'), context);
+            playerArray.push(player);
+            id = data.player - 1;
+            player = getYourPlayer(id);
+        }
+    });
+
+    socket.on('pos', function(data) {
+        playerArray[data.id].player.posX = data.posX;
+        playerArray[data.id].player.posY = data.posY;
+        playerArray[data.id].player.angle = data.angle;
     });
 
     document.onkeydown = function(event) {
@@ -53,20 +62,44 @@ window.onload = function() {
         var keyCode = e.keyCode || e.which;
         switch (keyCode) {
             case 32:
-                socket.emit('fire', player);
+                socket.emit('fire', id);
                 player.fire(bulletArray);
                 break;
             case 38:
                 player.run(true);
+                socket.emit('pos', {
+                    'posX': player.posX,
+                    'posY': player.posY,
+                    'angle': player.angle,
+                    'id': id
+                });
                 break;
             case 37:
                 player.rotate(false);
+                socket.emit('pos', {
+                    'posX': player.posX,
+                    'posY': player.posY,
+                    'angle': player.angle,
+                    'id': id
+                });
                 break;
             case 39:
                 player.rotate(true);
+                socket.emit('pos', {
+                    'posX': player.posX,
+                    'posY': player.posY,
+                    'angle': player.angle,
+                    'id': id
+                });
                 break;
             case 40:
                 player.run(false);
+                socket.emit('pos', {
+                    'posX': player.posX,
+                    'posY': player.posY,
+                    'angle': player.angle,
+                    'id': id
+                });
                 break;
         }
     };
@@ -78,10 +111,22 @@ window.onload = function() {
             case 38:
             case 40:
                 player.stopRun();
+                socket.emit('pos', {
+                    'posX': player.posX,
+                    'posY': player.posY,
+                    'angle': player.angle,
+                    'id': id
+                });
                 break;
             case 37:
             case 39:
                 player.stopRotate();
+                socket.emit('pos', {
+                    'posX': player.posX,
+                    'posY': player.posY,
+                    'angle': player.angle,
+                    'id': id
+                });
                 break;
         }
     };

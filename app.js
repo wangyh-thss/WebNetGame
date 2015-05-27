@@ -162,9 +162,27 @@ app.get('/', function (req, res) {
 
 app.use(express.static(__dirname));
 
+var player_count = 0;
+
 io.on('connection', function (socket) {
-    socket.emit('maze', maze);
-    socket.on('fire', function(player) {
-        io.emit('fire', player);
+    if (player_count < 2) {
+        player_count++;
+        io.emit('init', {
+            'maze': maze,
+            'player': player_count
+        });
+    } else {
+        return;
+    }
+    socket.on('fire', function(id) {
+        socket.broadcast.emit('fire', id);
+    });
+
+    socket.on('pos', function(data) {
+        socket.broadcast.emit('pos', data);
+    });
+
+    socket.on('disconnect', function () {
+        player_count--;
     });
 });
