@@ -61,7 +61,7 @@ function testCollisionBulletTank(bullet, tank) {
     }
 }
 
-function testCollisionTankMap1(tank, map) {
+function testCollisionTankMap1(tank, map, state) {
     function rotatePoint(point, angle, centerPoint) {
         var oldX = point.x - centerPoint.x;
         var oldY= point.y - centerPoint.y;
@@ -123,81 +123,114 @@ function testCollisionTankMap1(tank, map) {
         }
     }
 
-    var node1 = map.getNode(point1.x, point1.y), node2 = map.getNode(point2.x, point2.y), node;
-    if (node1 != node2) {
-        if(node1.x === node2.x) {
-            var node = node1.y > node2.y ? node2 : node1;
-            if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
-                return true;
-            }
-        } else if (node1.y === node2.y) {
-            var node = node1.x > node2.x ? node2 : node1;
-            if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
-                return true;
-            }
-        } else {
-            var cornerPoint = map.getRightdownCorner(Math.min(node1.x, node2.x), Math.min(node1.y, node2.y));
-            var k = (point1.y - point2.y) / (point1.x - point2.x);
-            var flag = (cornerPoint.y - point1.y) - k * (cornerPoint.x - point1.x)
-            if (k < 0) {
-                if (tank.tempX > tank.posX || tank.tempY > tank.posY) {
-                    if (flag <= 0) {
-                        return true;
-                    }
-                } else {
-                    if (flag >= 0) {
-                        return true
-                    }
+    var node1, node2, node;
+    if (state === 0 || state === 2) {
+        node1 = map.getNode(point1.x, point1.y);
+        node2 = map.getNode(point2.x, point2.y);
+        if (node1 != node2) {
+            if(node1.x === node2.x) {
+                var node = node1.y > node2.y ? node2 : node1;
+                if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
+                    return true;
                 }
-            } else if (k > 0) {
-                if (tank.tempX > tank.posX || tank.tempY < tank.posY) {
-                    if (flag <= 0) {
-                        return true;
+            } else if (node1.y === node2.y) {
+                var node = node1.x > node2.x ? node2 : node1;
+                if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
+                    return true;
+                }
+            } else {
+                var cornerPoint = map.getRightdownCorner(Math.min(node1.x, node2.x), Math.min(node1.y, node2.y));
+                var k = (point1.y - point2.y) / (point1.x - point2.x);
+                var flag = (cornerPoint.y - point1.y) - k * (cornerPoint.x - point1.x)
+                if (state !== 2 && k < 0) {
+                    if (tank.tempX > tank.posX || tank.tempY > tank.posY) {
+                        if (flag <= 0) {
+                            return true;
+                        }
+                    } else {
+                        if (flag >= 0) {
+                            return true
+                        }
                     }
-                } else {
-                    if (flag >= 0) {
-                        return true
+                } else if (state !== 2 && k > 0) {
+                    if (tank.tempX > tank.posX || tank.tempY < tank.posY) {
+                        if (flag >= 0) {
+                            return true;
+                        }
+                    } else if (tank.tempX < tank.posX || tank.tempY > tank.posY) {
+                        if (flag <= 0) {
+                            return true
+                        }
+                    } else {
+                        originFlag = (point1.y - point2.y) / (point1.x - point2.x)
+                    }
+                } else if (state === 2) {
+                    var point1now = rotatePoint({
+                        'x': Math.round(tank.posX - tank.width * 0.5),
+                        'y': Math.round(tank.posY - tank.height * 0.5)
+                    }, tank.angle, {'x':tank.posX, 'y':tank.posY});
+                    var point2now = rotatePoint({
+                        'x': Math.round(tank.posX + tank.width * 0.5),
+                        'y': Math.round(tank.posY - tank.height * 0.5)
+                    }, tank.angle, {'x':tank.posX, 'y':tank.posY});
+                    var flagNow = (cornerPoint.y - point1now.y) - ((point1now.y - point2now.y) / (point1now.x - point2now.x)) * (cornerPoint.x - point1now.x);
+                    if ((flagNow > 0) !== (flag > 0)) {
+                        return true;
                     }
                 }
             }
         }
     }
-
-    node1 = map.getNode(point3.x, point3.y);
-    node2 = map.getNode(point4.x, point4.y);
-    if (node1 != node2) {
-        if(node1.x === node2.x) {
-            var node = node1.y > node2.y ? node2 : node1;
-            if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
-                return true;
-            }
-        } else if (node1.y === node2.y) {
-            var node = node1.x > node2.x ? node2 : node1;
-            if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
-                return true;
-            }
-        } else {
-            var cornerPoint = map.getRightdownCorner(Math.min(node1.x, node2.x), Math.min(node1.y, node2.y));
-            var k = (point3.y - point4.y) / (point3.x - point4.x);
-            var flag = (cornerPoint.y - point3.y) - k * (cornerPoint.x - point3.x)
-            if (k < 0) {
-                if (tank.tempX > tank.posX || tank.tempY > tank.posY) {
-                    if (flag <= 0) {
-                        return true;
-                    }
-                } else {
-                    if (flag >= 0) {
-                        return true
-                    }
+    if (state === 1 || state === 2) {
+        node1 = map.getNode(point3.x, point3.y);
+        node2 = map.getNode(point4.x, point4.y);
+        if (node1 != node2) {
+            if(node1.x === node2.x) {
+                var node = node1.y > node2.y ? node2 : node1;
+                if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
+                    return true;
                 }
-            } else if (k > 0) {
-                if (tank.tempX > tank.posX || tank.tempY < tank.posY) {
-                    if (flag <= 0) {
-                        return true;
+            } else if (node1.y === node2.y) {
+                var node = node1.x > node2.x ? node2 : node1;
+                if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
+                    return true;
+                }
+            } else {
+                var cornerPoint = map.getRightdownCorner(Math.min(node1.x, node2.x), Math.min(node1.y, node2.y));
+                var k = (point3.y - point4.y) / (point3.x - point4.x);
+                var flag = (cornerPoint.y - point3.y) - k * (cornerPoint.x - point3.x)
+                if (state !== 2 && k < 0) {
+                    if (tank.tempX > tank.posX || tank.tempY > tank.posY) {
+                        if (flag <= 0) {
+                            return true;
+                        }
+                    } else {
+                        if (flag >= 0) {
+                            return true
+                        }
                     }
-                } else {
-                    if (flag >= 0) {
-                        return true
+                } else if (state !== 2 && k > 0) {
+                    if (tank.tempX > tank.posX || tank.tempY < tank.posY) {
+                        if (flag >= 0) {
+                            return true;
+                        }
+                    } else {
+                        if (flag <= 0) {
+                            return true
+                        }
+                    }
+                } else if (state === 2) {
+                    var point3now = rotatePoint({
+                        'x': Math.round(tank.posX + tank.width * 0.5),
+                        'y': Math.round(tank.posY + tank.height * 0.5)
+                    }, tank.angle, {'x':tank.posX, 'y':tank.posY});
+                    var point4now = rotatePoint({
+                        'x': Math.round(tank.posX - tank.width * 0.5),
+                        'y': Math.round(tank.posY + tank.height * 0.5)
+                    }, tank.angle, {'x':tank.posX, 'y':tank.posY});
+                    var flagNow = (cornerPoint.y - point3now.y) - ((point3now.y - point4now.y) / (point3now.x - point4now.x)) * (cornerPoint.x - point3now.x);
+                    if ((flagNow > 0) !== (flag > 0)) {
+                        return true;
                     }
                 }
             }
