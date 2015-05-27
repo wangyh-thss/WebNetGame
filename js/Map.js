@@ -589,6 +589,15 @@ var Map = {
         var c = Math.floor(posX / this.cellW);
         var r = Math.floor(posY / this.cellH);
         return this.maze.getNode(c, r);
+    },
+
+    'getRightdownCorner': function(x, y) {
+        var right = (x + 1) * this.cellW;
+        var down = (y + 1) * this.cellH;
+        return({
+            'x': right,
+            'y': down
+        });
     }
 }
 

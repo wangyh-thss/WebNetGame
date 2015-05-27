@@ -135,8 +135,31 @@ function testCollisionTankMap1(tank, map) {
             if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
                 return true;
             }
-        } else if (node1 !== nodeCenter && node2 !==nodeCenter) {
-
+        } else {
+            var cornerPoint = map.getRightdownCorner(Math.min(node1.x, node2.x), Math.min(node1.y, node2.y));
+            var k = (point1.y - point2.y) / (point1.x - point2.x);
+            var flag = (cornerPoint.y - point1.y) - k * (cornerPoint.x - point1.x)
+            if (k < 0) {
+                if (tank.tempX > tank.posX || tank.tempY > tank.posY) {
+                    if (flag <= 0) {
+                        return true;
+                    }
+                } else {
+                    if (flag >= 0) {
+                        return true
+                    }
+                }
+            } else if (k > 0) {
+                if (tank.tempX > tank.posX || tank.tempY < tank.posY) {
+                    if (flag <= 0) {
+                        return true;
+                    }
+                } else {
+                    if (flag >= 0) {
+                        return true
+                    }
+                }
+            }
         }
     }
 
@@ -153,8 +176,31 @@ function testCollisionTankMap1(tank, map) {
             if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
                 return true;
             }
-        } else if (node1 !== nodeCenter && node2 !==nodeCenter) {
-
+        } else {
+            var cornerPoint = map.getRightdownCorner(Math.min(node1.x, node2.x), Math.min(node1.y, node2.y));
+            var k = (point3.y - point4.y) / (point3.x - point4.x);
+            var flag = (cornerPoint.y - point3.y) - k * (cornerPoint.x - point3.x)
+            if (k < 0) {
+                if (tank.tempX > tank.posX || tank.tempY > tank.posY) {
+                    if (flag <= 0) {
+                        return true;
+                    }
+                } else {
+                    if (flag >= 0) {
+                        return true
+                    }
+                }
+            } else if (k > 0) {
+                if (tank.tempX > tank.posX || tank.tempY < tank.posY) {
+                    if (flag <= 0) {
+                        return true;
+                    }
+                } else {
+                    if (flag >= 0) {
+                        return true
+                    }
+                }
+            }
         }
     }
 
