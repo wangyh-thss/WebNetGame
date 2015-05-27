@@ -307,7 +307,7 @@ var Map = {
     'player1Y': 0,
     'player2X': 0,
     'player2Y': 0,
-    'createNew': function(canvas, context) {
+    'createNew': function(canvas, context, m) {
         this.context = context;
         this.canvas = canvas;
         var maze = new Maze({
@@ -465,20 +465,23 @@ var Map = {
             maze.perfect = perfect || false;
             maze.braid = braid || false;
 
-            maze.init();
+            //maze.init();
 
-            maze.startNode = maze.getRandomNode();
+            //maze.startNode = maze.getRandomNode();
+            maze.startNode = m.startNode;
             map.player1X = Math.round(maze.startNode.x * map.cellW + map.cellW * 0.5);
             map.player1Y = Math.round(maze.startNode.y * map.cellH + map.cellH * 0.5);
-            do {
-                maze.endNode = maze.getRandomNode();
-            } while (maze.startNode == maze.endNode);
+            //*do {
+            //    maze.endNode = maze.getRandomNode();
+            //} while (maze.startNode == maze.endNode);
+            maze.endNode = m.endNode;
             map.player2X = Math.round(maze.endNode.x * map.cellW + map.cellW * 0.5);
             map.player2Y = Math.round(maze.endNode.y * map.cellH + map.cellH * 0.5);
 
             // maze.setBlock(15, 15, 6, 5);
             // maze.setRoom(5, 5, 6, 5);
-            maze.generate();
+            //maze.generate();
+            maze.grid = m.grid;
         }
 
         function sizeInit() {

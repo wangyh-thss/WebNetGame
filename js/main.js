@@ -1,3 +1,5 @@
+var map;
+
 window.onload = function() {
 
     function refreshCanvas() {
@@ -21,22 +23,29 @@ window.onload = function() {
     var canvas = document.getElementById('_canvas');
     context = canvas.getContext('2d');
 
-    map = Map.createNew(canvas, context);
+    canvas.width = window.innerHeight - 20;
+    canvas.height = window.innerHeight - 20;
 
     playerArray = new Array();
-    var player1 = creatNewTank(map.player1X, map.player1Y, document.getElementById('player1'), context);
-    playerArray.push(player1);
+    var player1;
 
     var bulletArray = new Array();
     var bulletsPainter = BulletsPainter.createNew(bulletArray, context);
 
     var painterTimer = setInterval(timerEvent, 25);
 
-    var player = getYourPlayer();
+    var player;
 
     var socket = io();
     socket.on('fire', function() {
         player.fire(bulletArray);
+    });
+
+    socket.on('maze', function(maze) {
+        map = Map.createNew(canvas, context, maze);
+        player1 = creatNewTank(map.player1X, map.player1Y, document.getElementById('player1'), context)
+        playerArray.push(player1);
+        player = getYourPlayer();
     });
 
     document.onkeydown = function(event) {
