@@ -28,95 +28,104 @@ window.onload = function() {
     var bulletArray = new Array();
     var bulletsPainter = BulletsPainter.createNew(bulletArray, context);
 
-    var painterTimer = setInterval(timerEvent, 25);
+    var painterTimer, player, gameStarted = false;
 
-    var player;
-
-    var socket = io();
-    socket.on('fire', function(id) {
+    var loginSocket = io(), roomSocket = null;
+    loginSocket.on('fire', function(id) {
         playerArray[id].player.fire(bulletArray);
     });
 
     var id;
     var keyRunning = {};
 
-    socket.on('init', function(data) {
-        if (!map) {
-            map = Map.createNew(canvas, context, data.maze);
-            player = creatNewTank(map.player1X, map.player1Y, document.getElementById('player1'), context);
-            playerArray.push(player);
-            player = creatNewTank(map.player2X, map.player2Y, document.getElementById('player2'), context);
-            playerArray.push(player);
-            id = data.player - 1;
-            player = getYourPlayer(id);
+    loginSocket.on('join room', function(data) {
+        if(data.err) {
+            return;
         }
-    });
+        roomSocket = io(data.roomName);
+        roomSocket.on('start', function(data) {
+            $('#loginStage').fadeOut(800, function() {
+                $('#_canvas').fadeIn();
+            });
+        })
+        roomSocket.on('init', function(data) {
+            if (!map) {
+                map = Map.createNew(canvas, context, data.maze);
+                painterTimer = setInterval(timerEvent, 25);
+                player = creatNewTank(map.player1X, map.player1Y, document.getElementById('player1'), context);
+                playerArray.push(player);
+                player = creatNewTank(map.player2X, map.player2Y, document.getElementById('player2'), context);
+                playerArray.push(player);
+                id = data.player - 1;
+                player = getYourPlayer(id);
+            }
+        });
 
-    socket.on('run', function(data) {
-        playerArray[data.id].player.run(data.direction);
-    });
+        roomSocket.on('run', function(data) {
+            playerArray[data.id].player.run(data.direction);
+        });
 
-    socket.on('rotate', function(data) {
-        playerArray[data.id].player.rotate(data.direction);
-    });
+        roomSocket.on('rotate', function(data) {
+            playerArray[data.id].player.rotate(data.direction);
+        });
 
-    socket.on('stopRun', function(id) {
-        playerArray[id].player.stopRun();
-    });
+        roomSocket.on('stopRun', function(id) {
+            playerArray[id].player.stopRun();
+        });
 
-    socket.on('stopRotate', function(id) {
-        playerArray[id].player.stopRotate();
-    });
-
-    socket.on('loginResponse', function(data) {
-
+        roomSocket.on('stopRotate', function(id) {
+            playerArray[id].player.stopRotate();
+        });
     });
 
     $('#loginBtn').click(function(event) {
-        var user = $('#inputUsername').val();
-        var room = $('#inputRoomname').val();
-        socket.emit('login', {
-            'user': user,
-            'room': room
+        var userName = $('#inputUsername').val();
+        var roomName = $('#inputRoomname').val();
+        loginSocket.emit('room', {
+            'userName': userName,
+            'roomName': roomName
         })
     })
 
     document.onkeydown = function(event) {
         var e = event || window.event;
         var keyCode = e.keyCode || e.which;
+        if (!gameStarted) {
+            return;
+        }
         if (keyRunning[keyCode] || keyRunning[keyCode] == true) {
             return;
         }
         keyRunning[keyCode] = true;
         switch (keyCode) {
             case 32:
-                socket.emit('fire', id);
+                roomSocket.emit('fire', id);
                 player.fire(bulletArray);
                 break;
             case 38:
                 player.run(true);
-                socket.emit('run', {
+                roomSocket.emit('run', {
                     'id': id,
                     'direction': true
                 });
                 break;
             case 37:
                 player.rotate(false);
-                socket.emit('rotate', {
+                roomSocket.emit('rotate', {
                     'direction': false,
                     'id': id
                 });
                 break;
             case 39:
                 player.rotate(true);
-                socket.emit('rotate', {
+                roomSocket.emit('rotate', {
                     'direction': true,
                     'id': id
                 });
                 break;
             case 40:
                 player.run(false);
-                socket.emit('run', {
+                roomSocket.emit('run', {
                     'direction': false,
                     'id': id
                 });
@@ -127,17 +136,20 @@ window.onload = function() {
     document.onkeyup = function(event) {
         var e = event || window.event;
         var keyCode = e.keyCode || e.which;
+        if (!gameStarted) {
+            return;
+        }
         keyRunning[keyCode] = false;
         switch (keyCode) {
             case 38:
             case 40:
                 player.stopRun();
-                socket.emit('stopRun', id);
+                roomSocket.emit('stopRun', id);
                 break;
             case 37:
             case 39:
                 player.stopRotate();
-                socket.emit('stopRotate', id);
+                roomSocket.emit('stopRotate', id);
                 break;
         }
     };
