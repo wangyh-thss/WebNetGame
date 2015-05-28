@@ -186,6 +186,14 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('rotate', data);
     });
 
+    socket.on('stopRun', function(data) {
+        socket.broadcast.emit('stopRun', data);
+    });
+
+    socket.on('stopRotate', function(data) {
+        socket.broadcast.emit('stopRotate', data);
+    });
+
     socket.on('disconnect', function () {
         player_count--;
     });
