@@ -44,6 +44,14 @@ io.on('connection', function (socket) {
             socket.emit('join room', {err: 'room full'});
         }
     });
+
+    socket.on('disconnect', function() {
+        for (var i = 0; i < free_user.length; i++) {
+            if (free_user[i] == socket) {
+                free_user.splice(i, 1);
+            }
+        }
+    })
 });
 
 function onNewNameSpace(namespace) {
@@ -53,8 +61,8 @@ function onNewNameSpace(namespace) {
         if (player_count[namespace] < 2) {
             player_count[namespace]++;
             socket.emit('init', {
-                'maze': maze[namespace],
-                'player': player_count[namespace]
+                maze: maze[namespace],
+                player: player_count[namespace]
             });
         } else {
             return;
