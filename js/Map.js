@@ -471,7 +471,7 @@ var Map = {
             maze.startNode = m.startNode;
             map.player1X = Math.round(maze.startNode.x * map.cellW + map.cellW * 0.5);
             map.player1Y = Math.round(maze.startNode.y * map.cellH + map.cellH * 0.5);
-            //*do {
+            //do {
             //    maze.endNode = maze.getRandomNode();
             //} while (maze.startNode == maze.endNode);
             maze.endNode = m.endNode;

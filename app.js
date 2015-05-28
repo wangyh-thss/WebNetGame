@@ -17,9 +17,24 @@ app.use(express.static(__dirname));
 
 var player_count = {};
 var maze = {};
+var free_user = [];
 
 io.on('connection', function (socket) {
     socket.on('room', function(data) {
+        if (data.roomName == '') {
+            if (free_user.length > 0) {
+                var roomName;
+                do {
+                    roomName = RandomString(10);
+                } while (roomName in player_count);
+                onNewNameSpace(roomName);
+                socket.emit('join room', {roomName: roomName});
+                free_user[0].emit('join room', {roomName: roomName});
+                free_user.splice(0, 1);
+            } else {
+                free_user.push(socket);
+            }
+        }
         if (!player_count[data.roomName] || player_count[data.roomName] == 0) {
             onNewNameSpace(data.roomName);
         }
@@ -225,4 +240,11 @@ function createNewMaze() {
     maze.generate();
 
     return maze;
+}
+
+function RandomString(length) {
+    // http://www.outofmemory.cn
+    var str = '';
+    for ( ; str.length < length; str += Math.random().toString(36).substr(2) );
+    return str.substr(0, length);
 }
