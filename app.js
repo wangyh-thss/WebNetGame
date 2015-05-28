@@ -8,8 +8,8 @@ var io = require('socket.io')(server);
 var Maze = require('./Maze.js');
 
 var maze = new Maze({
-    width: 10,
-    height: 10,
+    width: 15,
+    height: 5,
     perfect: true,
     braid: false,
     checkOver: false,
@@ -178,8 +178,12 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('fire', id);
     });
 
-    socket.on('pos', function(data) {
-        socket.broadcast.emit('pos', data);
+    socket.on('run', function(data) {
+        socket.broadcast.emit('run', data);
+    });
+
+    socket.on('rotate', function(data) {
+        socket.broadcast.emit('rotate', data);
     });
 
     socket.on('disconnect', function () {
