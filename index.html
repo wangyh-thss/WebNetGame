@@ -3,9 +3,18 @@
 <head>
     <title>Tank</title>
     <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/signin.css"/>
 </head>
 <body>
-    <canvas id="_canvas" width="750" height="750"></canvas>
+    <div class="container">
+        <form id="login" class="form-signin" role="form">
+            <input type="text" class="form-control form-text" id="inputUsername" placeholder="Enter your name">
+            <input type="text" class="form-control form-text" id="inputRoomname" placeholder="Enter room password, if null, you will get a random opponent">
+            <div style="width:100%;text-align:center;padding:20px;"><button type="button" id="loginBtn" class="btn btn-primary" style="width:30%;">OK</button></div>
+        </form>
+    </div>
+    <canvas id="_canvas" width="750" height="750" style="display:none"></canvas>
     <img src="img/1.png" id="player1" height="39" width="51" style="display:none">
     <img src="img/1.png" id="player2" height="39" width="51" style="display:none">
 

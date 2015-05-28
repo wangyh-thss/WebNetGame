@@ -38,6 +38,7 @@ window.onload = function() {
     });
 
     var id;
+    var keyRunning = {};
 
     socket.on('init', function(data) {
         if (!map) {
@@ -57,9 +58,26 @@ window.onload = function() {
         playerArray[data.id].player.angle = data.angle;
     });
 
+    socket.on('loginResponse', function(data) {
+
+    });
+
+    $('#loginBtn').click(function(event) {
+        var user = $('#inputUsername').val();
+        var room = $('#inputRoomname').val();
+        socket.emit('login', {
+            'user': user,
+            'room': room
+        })
+    })
+
     document.onkeydown = function(event) {
         var e = event || window.event;
         var keyCode = e.keyCode || e.which;
+        if (keyRunning[keyCode] || keyRunning[keyCode] == true) {
+            return;
+        }
+        keyRunning[keyCode] = true;
         switch (keyCode) {
             case 32:
                 socket.emit('fire', id);
@@ -107,6 +125,7 @@ window.onload = function() {
     document.onkeyup = function(event) {
         var e = event || window.event;
         var keyCode = e.keyCode || e.which;
+        keyRunning[keyCode] = false;
         switch (keyCode) {
             case 38:
             case 40:
@@ -131,5 +150,3 @@ window.onload = function() {
         }
     };
 };
-
-
