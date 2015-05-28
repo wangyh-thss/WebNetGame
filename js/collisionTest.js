@@ -54,7 +54,7 @@ function testCollisionBulletTank(bullet, tank) {
     var bulletNewX = Math.round(bulletDistance * Math.cos(bulletNewAngle));
     var bulletNewY = Math.round(bulletDistance * Math.sin(bulletNewAngle));
 
-    if (bulletNewX >= 0 - tankW * 0.5 && bulletNewX <= tankW * 0.5 && bulletNewY >= 0 - tankH * 0.5 && bulletNewY <= tankH * 0.5) {
+    if (bulletNewX >= 0 - tankW * 0.5 + 4 && bulletNewX <= tankW * 0.5 - 4 && bulletNewY >= 0 - tankH * 0.5 + 4 && bulletNewY <= tankH * 0.5 - 4) {
         return true;
     } else {
         return false;

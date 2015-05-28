@@ -78,8 +78,8 @@ function onNewNameSpace(namespace) {
 
 function createNewMaze() {
     var maze = new Maze({
-        width: 10,
-        height: 10,
+        width: 5,
+        height: 5,
         perfect: true,
         braid: false,
         checkOver: false,

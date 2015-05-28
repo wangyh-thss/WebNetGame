@@ -1,4 +1,4 @@
-var map;
+var map, painterTimer;
 
 window.onload = function() {
 
@@ -28,7 +28,7 @@ window.onload = function() {
     var bulletArray = new Array();
     var bulletsPainter = BulletsPainter.createNew(bulletArray, context);
 
-    var painterTimer, player, gameStarted = false;
+    var player, gameStarted = false;
 
     var loginSocket = io(), roomSocket = null;
 
@@ -43,6 +43,8 @@ window.onload = function() {
         var port = window.location.port || 80;
         $('#roomName').text(data.roomName);
         $('#alert').slideDown();
+        $('#inputUsername').attr('disabled', true);
+        $('#inputRoomname').attr('disabled', true)
         roomSocket = io(host + ':' + port + '/' + data.roomName);
         roomSocket.on('start', function(data) {
             $('#loginStage').fadeOut(800, function() {

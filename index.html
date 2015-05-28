@@ -8,7 +8,6 @@
 </head>
 <body>
     <div class="container" id="loginStage">
-        
         <form id="login" class="form-signin" role="form">
             <div id="alert" class="alert alert-success" role="alert" style="display:none">您的游戏房间为：<span id="roomName"></span>，正在等待其他玩家进入...</div>
             <input type="text" class="form-control form-text" id="inputUsername" placeholder="Enter your name">
@@ -16,8 +15,10 @@
             <div style="width:100%;text-align:center;padding:20px;"><button type="button" id="loginBtn" class="btn btn-primary" style="width:30%;">OK</button></div>
         </form>
     </div>
-    <canvas id="_canvas" width="750" height="750" style="display:none"></canvas>
-    <img src="img/1.png" id="player1" height="39" width="51" style="display:none">
+    <div class="container" style="text-align:center;">
+        <canvas id="_canvas" width="750" height="750" style="display:none"></canvas>
+    </div>
+    <img src="img/1.png" id="player1" height="ind" width="51" style="display:none">
     <img src="img/1.png" id="player2" height="39" width="51" style="display:none">
 
 
@@ -27,5 +28,6 @@
     <script type="text/javascript" src="js/tank.js"></script>
     <script type="text/javascript" src="js/collisionTest.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/boom.js"></script>
 </body>
 </html>

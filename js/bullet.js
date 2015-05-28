@@ -24,6 +24,9 @@ var Bullet = {
                 for (var i = 0; i < playerArray.length; i++) {
                     if (testCollisionBulletTank(bulletObj, playerArray[i])) {
                         console.log('Game Over');
+                        clearInterval(painterTimer);
+                        gameStarted = false;
+                        drawBoom(playerArray[i].player.posX, playerArray[i].player.posY);
                     }
                 }
             }
@@ -34,8 +37,8 @@ var Bullet = {
             clearInterval(this.timer);
         }
 
-        bullet.posX = Math.round(bullet.posX - 18 * Math.sin(speedAngle));
-        bullet.posY = Math.round(bullet.posY + 23 * Math.cos(speedAngle));
+        bullet.posX = Math.round(bullet.posX - 20 * Math.sin(speedAngle));
+        bullet.posY = Math.round(bullet.posY + 26 * Math.cos(speedAngle));
 
         bullet.run();
         return bullet;
