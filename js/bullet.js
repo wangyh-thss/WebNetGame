@@ -25,8 +25,8 @@ var Bullet = {
                     if (testCollisionBulletTank(bulletObj, playerArray[i])) {
                         console.log('Game Over');
                         clearInterval(painterTimer);
-                        for (var i = 0; i < bulletArray.length; i++) {
-                            bulletArray[i].destory();
+                        for (var j = 0; j < bulletArray.length; j++) {
+                            bulletArray[j].destory();
                         }
                         window.gameStarted = false;
                         window.loser = i;

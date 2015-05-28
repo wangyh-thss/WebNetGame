@@ -35,14 +35,15 @@ io.on('connection', function (socket) {
             } else {
                 free_user.push(socket);
             }
-        }
-        if (!player_count[data.roomName] || player_count[data.roomName] == 0) {
-            onNewNameSpace(data.roomName);
-        }
-        if (player_count[data.roomName] < 2) {
-            socket.emit('join room', {roomName: data.roomName});
         } else {
-            socket.emit('join room', {err: 'room full'});
+            if (!player_count[data.roomName] || player_count[data.roomName] == 0) {
+                onNewNameSpace(data.roomName);
+            }
+            if (player_count[data.roomName] < 2) {
+                socket.emit('join room', {roomName: data.roomName});
+            } else {
+                socket.emit('join room', {err: 'room full'});
+            }
         }
     });
 
