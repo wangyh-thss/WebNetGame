@@ -25,8 +25,29 @@ var Bullet = {
                     if (testCollisionBulletTank(bulletObj, playerArray[i])) {
                         console.log('Game Over');
                         clearInterval(painterTimer);
+                        for (var i = 0; i < bulletArray.length; i++) {
+                            bulletArray[i].destory();
+                        }
                         gameStarted = false;
-                        drawBoom(playerArray[i].player.posX, playerArray[i].player.posY);
+                        loser = i;
+                        drawBoom(playerArray[loser].player.posX, playerArray[loser].player.posY);
+                        setTimeout(function() {
+                            clearTimeout(boomTimer);
+                            $('#gameStage').fadeOut(1000, function() {
+                                gameover();
+                                if (id === loser) {
+                                    $('#lose').show();
+                                    $('#win').hide();
+                                } else {
+                                    $('#lose').hide();
+                                    $('#win').show();
+                                }
+                                $('#alertRestart').hide();
+                                $('#restartStage').fadeIn();
+                                stage = 3;
+                            });
+
+                        }, 2000)
                     }
                 }
             }

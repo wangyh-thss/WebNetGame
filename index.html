@@ -7,16 +7,23 @@
     <link rel="stylesheet" href="css/signin.css"/>
 </head>
 <body>
-    <div class="container" id="loginStage">
+    <div class="container" id="loginStage" style="text-align:center;">
         <form id="login" class="form-signin" role="form">
             <div id="alert" class="alert alert-success" role="alert" style="display:none">您的游戏房间为：<span id="roomName"></span>，正在等待其他玩家进入...</div>
+            <div id="alertFull" class="alert alert-danger" role="alert" style="display:none">不好意思，房间已经满了哦~~</div>
             <input type="text" class="form-control form-text" id="inputUsername" placeholder="Enter your name">
             <input type="text" class="form-control form-text" id="inputRoomname" placeholder="Enter room password, if null, you will get a random opponent">
             <div style="width:100%;text-align:center;padding:20px;"><button type="button" id="loginBtn" class="btn btn-primary" style="width:30%;">OK</button></div>
         </form>
     </div>
-    <div class="container" style="text-align:center;">
-        <canvas id="_canvas" width="750" height="750" style="display:none"></canvas>
+    <div class="container" id="gameStage" style="text-align:center;display:none;">
+        <canvas id="_canvas" width="750" height="750"></canvas>
+    </div>
+    <div class="container" id="restartStage" style="text-align:center;padding:20% 0;display:none;">
+        <div id="alertRestart" class="alert alert-success" role="alert" style="position: absolute;width: 100%;top: 0px;left: 0px;display:none;">等待对手确认...</div>
+        <h1 id="win" style="display:none;line-height:150px">获胜了！！恭喜你！！！</h1>
+        <h1 id="lose" style="display:none;line-height:150px">很遗憾...不小心输了 T_T</h1>
+        <button type="button" id="restart" class="btn btn-default" style="height:50px;width:30%;font-size:20px;">重新开始</button>
     </div>
     <img src="img/1.png" id="player1" height="ind" width="51" style="display:none">
     <img src="img/1.png" id="player2" height="39" width="51" style="display:none">

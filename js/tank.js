@@ -110,6 +110,11 @@ var Tank = {
             //set random position
         };
 
+        tank.stop = function() {
+            this.stopRun();
+            this.stopRotate();
+        }
+
         return tank;
     }
 }

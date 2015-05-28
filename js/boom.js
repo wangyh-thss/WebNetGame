@@ -1,10 +1,18 @@
 var booms={};
 function drawBoom(x, y) {
+    booms = {};
+    drawBooms(x, y);
+}
+
+function drawBooms(x, y) {
     var canvas = document.getElementById('_canvas');
     if (canvas == null) return false;
     var context = canvas.getContext('2d');
     map.renderMaze();
     for (var i = 0; i < playerArray.length; i++) {
+        if (i === loser){
+            continue;
+        }
         playerArray[i].painter.draw();
     }
     context.save();
@@ -29,8 +37,8 @@ function drawBoom(x, y) {
     }
 
     context.restore();
-    setTimeout(function() {
-        drawBoom(x, y)
+    boomTimer = setTimeout(function() {
+        drawBooms(x, y)
     }, 200);
 }
 

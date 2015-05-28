@@ -1,4 +1,5 @@
-var map, painterTimer;
+var map, painterTimer, gameStarted = false, boomTimer, loser, id = null, stage = 1;
+var gameover = null;
 
 window.onload = function() {
 
@@ -25,18 +26,21 @@ window.onload = function() {
 
     playerArray = new Array();
 
-    var bulletArray = new Array();
+    bulletArray = new Array();
     var bulletsPainter = BulletsPainter.createNew(bulletArray, context);
 
-    var player, gameStarted = false;
+    var player;
 
     var loginSocket = io(), roomSocket = null;
 
-    var id;
     var keyRunning = {};
 
     loginSocket.on('join room', function(data) {
         if(data.err) {
+            $('#alertFull').slideDown();
+            setTimeout(function() {
+                $('#alertFull').slideUp();
+            }, 3000);
             return;
         }
         var host = window.location.hostname;
@@ -44,26 +48,35 @@ window.onload = function() {
         $('#roomName').text(data.roomName);
         $('#alert').slideDown();
         $('#inputUsername').attr('disabled', true);
-        $('#inputRoomname').attr('disabled', true)
+        $('#inputRoomname').attr('disabled', true);
         roomSocket = io(host + ':' + port + '/' + data.roomName);
         roomSocket.on('start', function(data) {
-            $('#loginStage').fadeOut(800, function() {
-                $('#_canvas').fadeIn(800, function() {
-                    gameStarted = true;
+            if (stage === 1){
+                $('#loginStage').fadeOut(800, function() {
+                    $('#gameStage').fadeIn(800, function() {
+                        gameStarted = true;
+                    });
                 });
-            });
-        })
-        roomSocket.on('init', function(data) {
-            if (!map) {
-                map = Map.createNew(canvas, context, data.maze);
-                painterTimer = setInterval(timerEvent, 25);
-                player = creatNewTank(map.player1X, map.player1Y, document.getElementById('player1'), context);
-                playerArray.push(player);
-                player = creatNewTank(map.player2X, map.player2Y, document.getElementById('player2'), context);
-                playerArray.push(player);
-                id = data.player - 1;
-                player = getYourPlayer(id);
+            } else if (stage === 3) {
+                $('#restartStage').fadeOut(800, function() {
+                    $('#gameStage').fadeIn(800, function() {
+                        gameStarted = true;
+                    });
+                });
             }
+            stage = 2;
+            painterTimer = setInterval(timerEvent, 25);
+        });
+        roomSocket.on('init', function(data) {
+            map = Map.createNew(canvas, context, data.maze);
+            if (id === null) {
+                id = data.player - 1;
+            }
+            player = creatNewTank(map.player1X, map.player1Y, document.getElementById('player1'), context);
+            playerArray.push(player);
+            player = creatNewTank(map.player2X, map.player2Y, document.getElementById('player2'), context);
+            playerArray.push(player);
+            player = getYourPlayer(id);
         });
 
         roomSocket.on('run', function(data) {
@@ -85,6 +98,23 @@ window.onload = function() {
         roomSocket.on('fire', function(id) {
             playerArray[id].player.fire(bulletArray);
         });
+
+        roomSocket.on('check', function(data) {
+            var id = data.id
+            playerArray[id].player.posX = data.posX;
+            playerArray[id].player.posY = data.posY;
+            playerArray[id].player.angle = data.angle;
+        });
+
+        gameover = function() {
+            map = undefined;
+            for (var i = 0; i < playerArray.length; i++) {
+                playerArray[i].player.stop();
+            }
+            playerArray.splice(0, playerArray.length);
+            bulletArray.splice(0, bulletArray.length);
+            roomSocket.emit('gameover', id);
+        };
     });
 
     $('#loginBtn').click(function(event) {
@@ -93,7 +123,14 @@ window.onload = function() {
         loginSocket.emit('room', {
             'userName': userName,
             'roomName': roomName
-        })
+        });
+    });
+
+    $('#restart').click(function(event) {
+        if(roomSocket) {
+            $('#alertRestart').slideDown();
+            roomSocket.emit('restart', id);
+        }
     })
 
     document.onkeydown = function(event) {
@@ -149,6 +186,12 @@ window.onload = function() {
             return;
         }
         keyRunning[keyCode] = false;
+        roomSocket.emit('check', {
+            'id': id,
+            'posX': player.posX,
+            'posY': player.posY,
+            'angle': player.angle
+        })
         switch (keyCode) {
             case 38:
             case 40:
@@ -162,4 +205,4 @@ window.onload = function() {
                 break;
         }
     };
-};
+}; 
