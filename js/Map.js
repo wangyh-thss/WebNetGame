@@ -311,8 +311,8 @@ var Map = {
         this.context = context;
         this.canvas = canvas;
         var maze = new Maze({
-            width: 10,
-            height: 10,
+            width: m.width,
+            height: m.height,
             perfect: true,
             braid: false,
             checkOver: false,

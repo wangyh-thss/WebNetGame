@@ -8,8 +8,8 @@ var io = require('socket.io')(server);
 var Maze = require('./Maze.js');
 
 var maze = new Maze({
-    width: 15,
-    height: 5,
+    width: 10,
+    height: 10,
     perfect: true,
     braid: false,
     checkOver: false,

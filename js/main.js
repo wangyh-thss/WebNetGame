@@ -67,37 +67,29 @@ window.onload = function() {
                 break;
             case 38:
                 player.run(true);
-                socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
-                    'id': id
+                socket.emit('run', {
+                    'id': id,
+                    'direction': true
                 });
                 break;
             case 37:
                 player.rotate(false);
-                socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
+                socket.emit('rotate', {
+                    'direction': false,
                     'id': id
                 });
                 break;
             case 39:
                 player.rotate(true);
-                socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
+                socket.emit('rotate', {
+                    'direction': true,
                     'id': id
                 });
                 break;
             case 40:
                 player.run(false);
                 socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
+                    'direction': false,
                     'id': id
                 });
                 break;
