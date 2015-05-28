@@ -153,6 +153,7 @@ window.onload = function() {
             $('#alertRestart').slideDown();
             roomSocket.emit('restart', id);
         }
+        $('#restart').attr('disabled', true);
     })
 
     document.onkeydown = function(event) {

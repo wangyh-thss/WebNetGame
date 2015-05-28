@@ -60,6 +60,7 @@ function onNewNameSpace(namespace) {
     player_ready[namespace] = 0;
     maze[namespace] = createNewMaze();
     io.of('/' + namespace).on('connection', function(socket) {
+        console.log('connect:' + player_count[namespace]);
         if (player_count[namespace] < 2) {
             player_count[namespace]++;
             player_ready[namespace]++;
@@ -101,6 +102,7 @@ function onNewNameSpace(namespace) {
 
         socket.on('disconnect', function() {
             player_count[namespace]--;
+            console.log('disconnect:' + player_count[namespace]);
             socket.broadcast.emit('stop');
         });
 
