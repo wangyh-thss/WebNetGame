@@ -42,8 +42,11 @@ window.onload = function() {
         if(data.err) {
             return;
         }
-        roomSocket = io(data.roomName);
+        var host = window.location.hostname;
+        var port = window.location.port || 80;
+        roomSocket = io(host + ':' + port + '/' + data.roomName);
         roomSocket.on('start', function(data) {
+            gameStarted = true;
             $('#loginStage').fadeOut(800, function() {
                 $('#_canvas').fadeIn();
             });
