@@ -52,10 +52,20 @@ window.onload = function() {
         }
     });
 
-    socket.on('pos', function(data) {
-        playerArray[data.id].player.posX = data.posX;
-        playerArray[data.id].player.posY = data.posY;
-        playerArray[data.id].player.angle = data.angle;
+    socket.on('run', function(data) {
+        playerArray[data.id].player.run(data.direction);
+    });
+
+    socket.on('rotate', function(data) {
+        playerArray[data.id].player.rotate(data.direction);
+    });
+
+    socket.on('stopRun', function(id) {
+        playerArray[id].player.stopRun();
+    });
+
+    socket.on('stopRotate', function(id) {
+        playerArray[id].player.stopRotate();
     });
 
     socket.on('loginResponse', function(data) {
@@ -85,37 +95,29 @@ window.onload = function() {
                 break;
             case 38:
                 player.run(true);
-                socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
-                    'id': id
+                socket.emit('run', {
+                    'id': id,
+                    'direction': true
                 });
                 break;
             case 37:
                 player.rotate(false);
-                socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
+                socket.emit('rotate', {
+                    'direction': false,
                     'id': id
                 });
                 break;
             case 39:
                 player.rotate(true);
-                socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
+                socket.emit('rotate', {
+                    'direction': true,
                     'id': id
                 });
                 break;
             case 40:
                 player.run(false);
-                socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
+                socket.emit('run', {
+                    'direction': false,
                     'id': id
                 });
                 break;
@@ -130,22 +132,12 @@ window.onload = function() {
             case 38:
             case 40:
                 player.stopRun();
-                socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
-                    'id': id
-                });
+                socket.emit('stopRun', id);
                 break;
             case 37:
             case 39:
                 player.stopRotate();
-                socket.emit('pos', {
-                    'posX': player.posX,
-                    'posY': player.posY,
-                    'angle': player.angle,
-                    'id': id
-                });
+                socket.emit('stopRotate', id);
                 break;
         }
     };
