@@ -23,7 +23,11 @@ io.on('connection', function (socket) {
         if (!player_count[data.roomName] || player_count[data.roomName] == 0) {
             onNewNameSpace(data.roomName);
         }
-        socket.emit('join room', data.roomName);
+        if (player_count[data.roomName] < 2) {
+            socket.emit('join room', {roomName: data.roomName});
+        } else {
+            socket.emit('join room', {err: 'room full'});
+        }
     });
 });
 
@@ -39,6 +43,10 @@ function onNewNameSpace(namespace) {
             });
         } else {
             return;
+        }
+
+        if (player_count[namespace] == 2) {
+            io.of('/' + namespace).emit('start', maze[namespace]);
         }
 
         socket.on('fire', function(id) {
@@ -63,6 +71,7 @@ function onNewNameSpace(namespace) {
 
         socket.on('disconnect', function () {
             player_count[namespace]--;
+            socket.broadcast.emit('stop');
         });
     });
 }
