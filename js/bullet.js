@@ -28,23 +28,24 @@ var Bullet = {
                         for (var i = 0; i < bulletArray.length; i++) {
                             bulletArray[i].destory();
                         }
-                        gameStarted = false;
-                        loser = i;
-                        drawBoom(playerArray[loser].player.posX, playerArray[loser].player.posY);
+                        window.gameStarted = false;
+                        window.loser = i;
+                        drawBoom(playerArray[window.loser].player.posX, playerArray[window.loser].player.posY);
                         setTimeout(function() {
                             clearTimeout(boomTimer);
                             $('#gameStage').fadeOut(1000, function() {
                                 gameover();
-                                if (id === loser) {
+                                if (window.id === window.loser) {
                                     $('#lose').show();
                                     $('#win').hide();
                                 } else {
                                     $('#lose').hide();
                                     $('#win').show();
                                 }
+                                $('#restart').attr('disabled', false);
                                 $('#alertRestart').hide();
                                 $('#restartStage').fadeIn();
-                                stage = 3;
+                                window.stage = 3;
                             });
 
                         }, 2000)

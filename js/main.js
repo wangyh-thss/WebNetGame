@@ -51,20 +51,20 @@ window.onload = function() {
         $('#inputRoomname').attr('disabled', true);
         roomSocket = io(host + ':' + port + '/' + data.roomName);
         roomSocket.on('start', function(data) {
-            if (stage === 1){
+            if (window.stage === 1){
                 $('#loginStage').fadeOut(800, function() {
                     $('#gameStage').fadeIn(800, function() {
-                        gameStarted = true;
+                        window.gameStarted = true;
                     });
                 });
-            } else if (stage === 3) {
+            } else if (window.stage === 3) {
                 $('#restartStage').fadeOut(800, function() {
                     $('#gameStage').fadeIn(800, function() {
-                        gameStarted = true;
+                        window.gameStarted = true;
                     });
                 });
             }
-            stage = 2;
+            window.stage = 2;
             painterTimer = setInterval(timerEvent, 25);
         });
         roomSocket.on('init', function(data) {
@@ -106,12 +106,34 @@ window.onload = function() {
             playerArray[id].player.angle = data.angle;
         });
 
+        roomSocket.on('stop', function() {
+            gameover();
+            roomSocket.emit('disconnect');
+            window.stage = 1;
+            $('#gameStage').hide();
+            $('#restartStage').hide();
+            $('#alert').hide();
+            $('#inputUsername').attr('disabled', false);
+            $('#inputRoomname').attr('disabled', false);
+            $('#loginStage').fadeIn(500, function() {
+                $('#alertDisconnct').slideDown();
+                setTimeout(function() {
+                    $('#alertDisconnct').slideUp();
+                }, 3000);
+            });
+            window.id = null;
+            window.gameStarted = false;
+        });
+
         gameover = function() {
             map = undefined;
             for (var i = 0; i < playerArray.length; i++) {
                 playerArray[i].player.stop();
             }
             playerArray.splice(0, playerArray.length);
+            for (var i = 0; i < bulletArray.length; i++) {
+                bulletArray[i].destory();
+            }
             bulletArray.splice(0, bulletArray.length);
             roomSocket.emit('gameover', id);
         };

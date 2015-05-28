@@ -10,7 +10,8 @@ var Tank = {
             'runSpeed': 5,
             'runTimer': null,
             'height': 0,
-            'width': 0
+            'width': 0,
+            'reloadTimer': []
         };
 
         console.log(posX, posY);
@@ -93,7 +94,7 @@ var Tank = {
                 this.bulletRemain -= 1;
                 bulletArray.push(Bullet.createNew(this.posX, this.posY, this.angle))
                 var tankObj = this;
-                setTimeout(function() {
+                this.reloadTimer[this.bulletRemain] = setTimeout(function() {
                     tankObj.reload(bulletArray);
                 }, 10000);
             }
@@ -113,6 +114,11 @@ var Tank = {
         tank.stop = function() {
             this.stopRun();
             this.stopRotate();
+            for (var i = 0; i < this.reloadTimer.length; i++) {
+                if (this.reloadTimer[i]) {
+                    clearTimeout(this.reloadTimer[i])
+                }
+            }
         }
 
         return tank;
