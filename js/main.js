@@ -31,9 +31,6 @@ window.onload = function() {
     var painterTimer, player, gameStarted = false;
 
     var loginSocket = io(), roomSocket = null;
-    loginSocket.on('fire', function(id) {
-        playerArray[id].player.fire(bulletArray);
-    });
 
     var id;
     var keyRunning = {};
@@ -44,11 +41,14 @@ window.onload = function() {
         }
         var host = window.location.hostname;
         var port = window.location.port || 80;
+        $('#roomName').text(data.roomName);
+        $('#alert').slideDown();
         roomSocket = io(host + ':' + port + '/' + data.roomName);
         roomSocket.on('start', function(data) {
-            gameStarted = true;
             $('#loginStage').fadeOut(800, function() {
-                $('#_canvas').fadeIn();
+                $('#_canvas').fadeIn(800, function() {
+                    gameStarted = true;
+                });
             });
         })
         roomSocket.on('init', function(data) {
@@ -78,6 +78,10 @@ window.onload = function() {
 
         roomSocket.on('stopRotate', function(id) {
             playerArray[id].player.stopRotate();
+        });
+
+        roomSocket.on('fire', function(id) {
+            playerArray[id].player.fire(bulletArray);
         });
     });
 
