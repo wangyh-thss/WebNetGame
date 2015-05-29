@@ -7,7 +7,7 @@ module.exports = function(grunt) {
       },
       build: {
         files: [{
-          src: ['js/boom.js', 'js/bullet.js', 'js/collisionTest.js', 'js/main.js', 'js/map.js', 'js/tank.js'],
+          src: ['js/boom.js', 'js/bullet.js', 'js/collisionTest.js', 'js/main.js', 'js/Map.js', 'js/tank.js'],
           dest: 'index.min.js'
         }]
       },
