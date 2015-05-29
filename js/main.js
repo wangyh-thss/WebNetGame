@@ -57,9 +57,7 @@ window.onload = function() {
         $('#inputUsername').attr('disabled', true);
         $('#inputRoomname').attr('disabled', true);
         $('#loginBtn').attr('disabled', true);
-        roomSocket = io(host + ':' + port + '/' + data.roomName, {
-            'reconnection': false
-        });
+        roomSocket = io.connect(host + ':' + port + '/' + data.roomName, {'force new connection':true});
         roomSocket.on('start', function(data) {
             window.score = data.score;
             if (window.stage === 1){
@@ -111,7 +109,7 @@ window.onload = function() {
         });
 
         roomSocket.on('check', function(data) {
-            var id = data.id
+            var id = data.id;
             playerArray[id].player.posX = data.posX;
             playerArray[id].player.posY = data.posY;
             playerArray[id].player.angle = data.angle;
@@ -120,7 +118,8 @@ window.onload = function() {
         roomSocket.on('stop', function() {
             gameover();
             //roomSocket.emit('disconnect');
-            roomSocket.disconnect();
+            //roomSocket.disconnect();
+            //roomSocket.leave(data.namespace);
             window.stage = 1;
             $('#gameStage').hide();
             $('#restartStage').hide();
@@ -137,6 +136,7 @@ window.onload = function() {
             });
             window.id = null;
             window.gameStarted = false;
+            clearInterval(painterTimer);
         });
 
         gameover = function() {
