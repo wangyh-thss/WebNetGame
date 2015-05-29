@@ -29,7 +29,7 @@ io.on('connection', function (socket) {
                 var roomName;
                 do {
                     roomName = RandomString(10);
-                } while (roomName in player_count);
+                } while (roomName in player);
                 onNewNameSpace(roomName);
                 score[roomName].push({
                     'name': free_name,
