@@ -3,6 +3,10 @@ var gameover = null, score;
 
 window.onload = function() {
 
+    $('#inputUsername').attr('disabled', false);
+    $('#inputRoomname').attr('disabled', false);
+    $('#loginBtn').attr('disabled', false);
+
     function refreshCanvas() {
         context.clearRect(0, 0, 500, 500);
         map.renderMaze();
