@@ -1,4 +1,9 @@
-
+body {
+  background: #faf8ef;
+  color: #776e65;
+  margin: 0;
+}
+ 
 .form-signin {
   max-width: 530px;
   padding-top: 30%;
