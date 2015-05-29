@@ -171,10 +171,3 @@ function creatNewTank(posX, posY, imgDom, context) {
     };
     return returnObj;
 }
-
-
-
-
-
-
-

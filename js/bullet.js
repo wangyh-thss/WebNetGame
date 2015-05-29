@@ -4,8 +4,8 @@ var Bullet = {
             'posX': posX,
             'posY': posY,
             'radius': 3,
-            'speedX': Math.round(0 - (5 * Math.sin(speedAngle))),
-            'speedY': Math.round(5 * Math.cos(speedAngle)),
+            'speedX': Math.round(0 - (8 * Math.sin(speedAngle))),
+            'speedY': Math.round(8 * Math.cos(speedAngle)),
             'timer': null
         };
 
@@ -25,11 +25,16 @@ var Bullet = {
                     if (testCollisionBulletTank(bulletObj, playerArray[i])) {
                         console.log('Game Over');
                         clearInterval(painterTimer);
-                        for (var i = 0; i < bulletArray.length; i++) {
-                            bulletArray[i].destory();
+                        for (var j = 0; j < bulletArray.length; j++) {
+                            bulletArray[j].destory();
                         }
                         window.gameStarted = false;
                         window.loser = i;
+                        window.score[1 - window.loser].score++;
+                        for (var playerCount = 0; playerCount < window.score.length; playerCount++) {
+                            $('#player' + (playerCount+1) + 'Name').text(score[playerCount].name);
+                            $('#player' + (playerCount+1) + 'Score').text(score[playerCount].score);
+                        }
                         drawBoom(playerArray[window.loser].player.posX, playerArray[window.loser].player.posY);
                         setTimeout(function() {
                             clearTimeout(boomTimer);

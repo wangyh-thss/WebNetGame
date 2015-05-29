@@ -9,6 +9,7 @@
 <body>
     <div class="container" id="loginStage" style="text-align:center;">
         <form id="login" class="form-signin" role="form">
+            <div id="alertRandomRoom" class="alert alert-success" role="alert" style="display:none">正在等待匹配路人，请稍后...</div>
             <div id="alert" class="alert alert-success" role="alert" style="display:none">您的游戏房间为：<span id="roomName"></span>，正在等待其他玩家进入...</div>
             <div id="alertFull" class="alert alert-danger" role="alert" style="display:none">不好意思，房间已经满了哦~~</div>
             <div id="alertDisconnct" class="alert alert-danger" role="alert" style="display:none">对方已断开连接...</div>
@@ -18,24 +19,20 @@
         </form>
     </div>
     <div class="container" id="gameStage" style="text-align:center;display:none;">
-        <canvas id="_canvas" width="750" height="750"></canvas>
+        <canvas id="_canvas" width="500" height="500"></canvas>
     </div>
-    <div class="container" id="restartStage" style="text-align:center;padding:20% 0;display:none;">
+    <div class="container" id="restartStage" style="text-align:center;padding:20% 0;display:none">
         <div id="alertRestart" class="alert alert-success" role="alert" style="position: absolute;width: 100%;top: 0px;left: 0px;display:none;">等待对手确认...</div>
-        <h1 id="win" style="display:none;line-height:150px">获胜了！！恭喜你！！！</h1>
+        <h1 id="win" style="display:none;line-height:150px;">获胜了！！！恭喜你！！</h1>
         <h1 id="lose" style="display:none;line-height:150px">很遗憾...不小心输了 T_T</h1>
+        <h2 style="padding-bottom:30px"><span id="player1Name" style="padding:0px 20px">player1</span><span id="player1Score" style="padding:0px 20px">0</span>:<span id="player2Score" style="padding:0px 20px">0</span><span id="player2Name" style="padding:0px 20px">player2</span></h2>
         <button type="button" id="restart" class="btn btn-default" style="height:50px;width:30%;font-size:20px;">重新开始</button>
     </div>
-    <img src="img/1.png" id="player1" height="ind" width="51" style="display:none">
+    <img src="img/1.png" id="player1" height="39" width="51" style="display:none">
     <img src="img/1.png" id="player2" height="39" width="51" style="display:none">
 
 
-    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="js/bullet.js"></script>
-    <script type="text/javascript" src="js/Map.js"></script>
-    <script type="text/javascript" src="js/tank.js"></script>
-    <script type="text/javascript" src="js/collisionTest.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
-    <script type="text/javascript" src="js/boom.js"></script>
+    <script type="text/javascript" src="js/lib/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="index.min.js"></script>
 </body>
 </html>

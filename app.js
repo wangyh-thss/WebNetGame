@@ -18,31 +18,48 @@ app.use(express.static(__dirname));
 var player_count = {};
 var player_ready = {};
 var maze = {};
+var score = {};
 var free_user = [];
+var free_name;
 
 io.on('connection', function (socket) {
     socket.on('room', function(data) {
-        if (data.roomName == '') {
+        if (data.roomName === '') {
             if (free_user.length > 0) {
                 var roomName;
                 do {
                     roomName = RandomString(10);
                 } while (roomName in player_count);
                 onNewNameSpace(roomName);
+                score[roomName].push({
+                    'name': free_name,
+                    'score': 0
+                });
+                score[roomName].push({
+                    'name': data.userName || RandomString(5),
+                    'score': 0
+                });
                 socket.emit('join room', {roomName: roomName});
                 free_user[0].emit('join room', {roomName: roomName});
                 free_user.splice(0, 1);
             } else {
                 free_user.push(socket);
+                free_name = data.userName || RandomString(5);
+                socket.emit('waitRandomRoom');
             }
-        }
-        if (!player_count[data.roomName] || player_count[data.roomName] == 0) {
-            onNewNameSpace(data.roomName);
-        }
-        if (player_count[data.roomName] < 2) {
-            socket.emit('join room', {roomName: data.roomName});
         } else {
-            socket.emit('join room', {err: 'room full'});
+            if (!player_count[data.roomName] || player_count[data.roomName] == 0) {
+                onNewNameSpace(data.roomName);
+            }
+            score[data.roomName].push({
+                'name': data.userName || RandomString(5),
+                'score': 0
+            });
+            if (player_count[data.roomName] < 2) {
+                socket.emit('join room', {roomName: data.roomName});
+            } else {
+                socket.emit('join room', {err: 'room full'});
+            }
         }
     });
 
@@ -58,9 +75,9 @@ io.on('connection', function (socket) {
 function onNewNameSpace(namespace) {
     player_count[namespace] = 0;
     player_ready[namespace] = 0;
+    score[namespace] = []
     maze[namespace] = createNewMaze();
     io.of('/' + namespace).on('connection', function(socket) {
-        console.log('connect:' + player_count[namespace]);
         if (player_count[namespace] < 2) {
             player_count[namespace]++;
             player_ready[namespace]++;
@@ -68,12 +85,16 @@ function onNewNameSpace(namespace) {
                 maze: maze[namespace],
                 player: player_count[namespace]
             });
+            console.log('connect:' + player_count[namespace]);
         } else {
             return;
         }
 
         if (player_count[namespace] == 2) {
-            io.of('/' + namespace).emit('start', maze[namespace]);
+            io.of('/' + namespace).emit('start', {
+                'maze': maze[namespace],
+                'score': score[namespace]
+            });
         }
 
         socket.on('fire', function(id) {
@@ -107,7 +128,6 @@ function onNewNameSpace(namespace) {
         });
 
         socket.on('gameover', function(id) {
-            console.log('Game Over:' + player_ready[namespace]);
             if (maze[namespace]) {
                 maze[namespace] = undefined;
             }
@@ -116,6 +136,7 @@ function onNewNameSpace(namespace) {
             }
             if(player_ready[namespace] === 0){
                 maze[namespace] = createNewMaze();
+                score[namespace][1 - id].score++;
                 io.of('/' + namespace).emit('init', {
                     maze: maze[namespace]
                 })
@@ -125,7 +146,10 @@ function onNewNameSpace(namespace) {
         socket.on('restart', function() {
             player_ready[namespace]++;
             if (player_ready[namespace] === 2){
-                io.of('/' + namespace).emit('start', maze[namespace]);
+                io.of('/' + namespace).emit('start', {
+                    maze: maze[namespace],
+                    score: score[namespace]
+                });
             }
         });
     });

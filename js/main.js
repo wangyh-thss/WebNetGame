@@ -1,5 +1,5 @@
 var map, painterTimer, gameStarted = false, boomTimer, loser, id = null, stage = 1;
-var gameover = null;
+var gameover = null, score;
 
 window.onload = function() {
 
@@ -35,6 +35,13 @@ window.onload = function() {
 
     var keyRunning = {};
 
+    loginSocket.on('waitRandomRoom', function() {
+        $('#alertRandomRoom').slideDown();
+        $('#inputUsername').attr('disabled', true);
+        $('#inputRoomname').attr('disabled', true);
+        $('#loginBtn').attr('disabled', true);
+    });
+
     loginSocket.on('join room', function(data) {
         if(data.err) {
             $('#alertFull').slideDown();
@@ -49,8 +56,12 @@ window.onload = function() {
         $('#alert').slideDown();
         $('#inputUsername').attr('disabled', true);
         $('#inputRoomname').attr('disabled', true);
-        roomSocket = io(host + ':' + port + '/' + data.roomName);
+        $('#loginBtn').attr('disabled', true);
+        roomSocket = io(host + ':' + port + '/' + data.roomName, {
+            'reconnection': false
+        });
         roomSocket.on('start', function(data) {
+            window.score = data.score;
             if (window.stage === 1){
                 $('#loginStage').fadeOut(800, function() {
                     $('#gameStage').fadeIn(800, function() {
@@ -108,13 +119,16 @@ window.onload = function() {
 
         roomSocket.on('stop', function() {
             gameover();
-            roomSocket.emit('disconnect');
+            //roomSocket.emit('disconnect');
+            roomSocket.disconnect();
             window.stage = 1;
             $('#gameStage').hide();
             $('#restartStage').hide();
             $('#alert').hide();
+            $('#alertRandomRoom').hide();
             $('#inputUsername').attr('disabled', false);
             $('#inputRoomname').attr('disabled', false);
+            $('#loginBtn').attr('disabled', false);
             $('#loginStage').fadeIn(500, function() {
                 $('#alertDisconnct').slideDown();
                 setTimeout(function() {
@@ -135,7 +149,7 @@ window.onload = function() {
                 bulletArray[i].destory();
             }
             bulletArray.splice(0, bulletArray.length);
-            roomSocket.emit('gameover', id);
+            roomSocket.emit('gameover', window.loser);
         };
     });
 
@@ -166,6 +180,12 @@ window.onload = function() {
             return;
         }
         keyRunning[keyCode] = true;
+        roomSocket.emit('check', {
+            'id': id,
+            'posX': player.posX,
+            'posY': player.posY,
+            'angle': player.angle
+        });
         switch (keyCode) {
             case 32:
                 roomSocket.emit('fire', id);
@@ -214,7 +234,7 @@ window.onload = function() {
             'posX': player.posX,
             'posY': player.posY,
             'angle': player.angle
-        })
+        });
         switch (keyCode) {
             case 38:
             case 40:
