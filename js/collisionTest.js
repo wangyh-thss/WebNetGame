@@ -9,22 +9,22 @@ function testCollisisonBulletMap(bullet, map) {
         y = bullet.posY;
     var node = map.getNode(x, y);
     if ((node.value & Maze.Direction.W) !== Maze.Direction.W) {
-        if (x - node.x * map.cellW <= 8 && x - node.x * map.cellW >= 0 && bullet.speedX < 0) {
+        if (x - node.x * map.cellW <= 9 && x - node.x * map.cellW >= 0 && bullet.speedX < 0) {
             return 1;
         }
     }
     if ((node.value & Maze.Direction.E) !== Maze.Direction.E) {
-        if ((node.x + 1) * map.cellW - x <= 8 && (node.x + 1) * map.cellW - x >= 0 && bullet.speedX > 0) {
+        if ((node.x + 1) * map.cellW - x <= 9 && (node.x + 1) * map.cellW - x >= 0 && bullet.speedX > 0) {
             return 1;
         }
     }
     if ((node.value & Maze.Direction.N) !== Maze.Direction.N) {
-        if (y - node.y * map.cellH <= 8 && y - node.y * map.cellH >= 0 && bullet.speedY < 0) {
+        if (y - node.y * map.cellH <= 9 && y - node.y * map.cellH >= 0 && bullet.speedY < 0) {
             return 2;
         }
     }
     if ((node.value & Maze.Direction.S) !== Maze.Direction.S) {
-        if ((node.y + 1) * map.cellH - y <= 8 && (node.y + 1) * map.cellH - y >= 0 && bullet.speedY > 0) {
+        if ((node.y + 1) * map.cellH - y <= 9 && (node.y + 1) * map.cellH - y >= 0 && bullet.speedY > 0) {
             return 2;
         }
     }
