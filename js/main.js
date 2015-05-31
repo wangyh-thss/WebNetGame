@@ -5,6 +5,8 @@ window.onload = function() {
 
     function refreshCanvas() {
         context.clearRect(0, 0, 500, 500);
+        //context.fillStyle ="yellow";  
+        //context.fillRect(0,0, 500, 500); 
         map.renderMaze();
         for (var i = 0; i < playerArray.length; i++) {
             playerArray[i].painter.draw();
