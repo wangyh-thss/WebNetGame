@@ -68,6 +68,13 @@ window.onload = function() {
                         window.gameStarted = true;
                     });
                 });
+                //var gameRound = 0;
+                for (var playerCount = 0; playerCount < window.score.length; playerCount++) {
+                    $('#gameplayer' + (playerCount+1) + 'Name').text(score[playerCount].name);
+                    $('#gameplayer' + (playerCount+1) + 'Score').text(score[playerCount].score);
+                    //gameRound = score[playerCount].score + gameRound;
+                }
+                //$('#gameRound').text(gameRound+1);
             } else if (window.stage === 3) {
                 $('#restartStage').fadeOut(800, function() {
                     $('#gameStage').fadeIn(800, function() {

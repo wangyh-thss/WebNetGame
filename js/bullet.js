@@ -34,6 +34,7 @@ var Bullet = {
                         for (var playerCount = 0; playerCount < window.score.length; playerCount++) {
                             $('#player' + (playerCount+1) + 'Name').text(score[playerCount].name);
                             $('#player' + (playerCount+1) + 'Score').text(score[playerCount].score);
+                            $('#gameplayer' + (playerCount+1) + 'Score').text(score[playerCount].score);
                         }
                         drawBoom(playerArray[window.loser].player.posX, playerArray[window.loser].player.posY);
                         setTimeout(function() {
