@@ -9,7 +9,7 @@
 <body>
     <div class="container" id="loginStage" style="text-align:center;">
         <form id="login" class="form-signin" role="form">
-            <p style="font-size:26px;line-height:80px;">坦克大作战!</p>
+            <p style="font-size:26px;line-height:40px;">坦克大作战!</p>
             <p style="font-size:13px;line-height:24px;">小提示：输入你的名字和房间号可以进入玩耍哦~不输入你将会等待路人的加入陪你玩耍~</p>
             <div id="alertRandomRoom" class="alert alert-success" role="alert" style="display:none">正在等待匹配路人，请稍后...</div>
             <div id="alert" class="alert alert-success" role="alert" style="display:none">您的游戏房间为：<span id="roomName"></span>，正在等待其他玩家进入...</div>
@@ -21,19 +21,26 @@
         </form>
     </div>
     <div class="container" id="gameStage" style="text-align:center;display:none;">
-        <p id="gameTitle" style="line-height:100px;font-size:24px;">坦克大作战！打打打！嘟噜嘟噜嘟噜！打打打！</p>
+        <p id="gameTitle" style="line-height:80px;font-size:26px;font-family: 'American Typewriter' sans-serif "consolas";">Tank Fighting</p>
+        <!--<p id="gameTitle" style="line-height:24px;font-size:24px;font-family: 'American Typewriter' sans-serif "consolas";">Round<span id="gameRound" style="padding:0px 20px">0</span></p>-->
+        <p style="padding-bottom:10px;line-height:30px;font-size:22px;"><span id="gameplayer1Score" style="padding:0px 20px">0</span> <span id="gameplayer1Name" style="padding:0px 20px">player1</span>VS<span id="gameplayer2Name" style="padding:0px 20px">player2</span><span id="gameplayer2Score" style="padding:0px 20px">0</span></p>
         <canvas id="_canvas" width="500" height="500"></canvas>
     </div>
     <div class="container" id="restartStage" style="text-align:center;padding:20% 0;display:none">
         <div id="alertRestart" class="alert alert-success" role="alert" style="position: absolute;width: 100%;top: 0px;left: 0px;display:none;">等待对手确认...</div>
-        <h1 id="win" style="display:none;line-height:150px;">获胜了！！！恭喜你！！</h1>
-        <h1 id="lose" style="display:none;line-height:150px">很遗憾...不小心输了 T_T</h1>
+        <h1 id="win" style="display:none;line-height:150px;">Congratulations! You Win!</h1>
+        <h1 id="lose" style="display:none;line-height:150px">Sorry! You Lose! T_T</h1>
         <h2 style="padding-bottom:30px"><span id="player1Name" style="padding:0px 20px">player1</span><span id="player1Score" style="padding:0px 20px">0</span>:<span id="player2Score" style="padding:0px 20px">0</span><span id="player2Name" style="padding:0px 20px">player2</span></h2>
-        <button type="button" id="restart" class="btn btn-default" style="height:50px;width:30%;font-size:20px;">重新开始</button>
+        <button type="button" id="restart" class="btn btn-default" style="height:50px;width:20%;font-size:20px;">Restart</button>
     </div>
     <img src="img/tank-blue.png" id="player1" height="39" width="44" style="display:none">
     <img src="img/tank-green.png" id="player2" height="39" width="44" style="display:none">
 
+    <div id="footer">
+        <p>
+        <i>Copyright © 2014 <a href="https://stefaniexin.github.io" target="_blank" title="Xinyi Zhao"><strong>Xinyi Zhao</strong></a> &amp; <a href="https://github.com/wangyh-thss" target="_blank" title="Yihan Wang"><strong>Yihan Wang</strong></a> &amp; <a href="https://github.com/tarma" target="_blank" title="Zhansheng Fu"><strong>Zhansheng Fu</strong></a></i>
+        </p>
+    </div>
 
     <script type="text/javascript" src="js/lib/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="index.min.js"></script>
