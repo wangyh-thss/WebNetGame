@@ -240,6 +240,11 @@ window.onload = function() {
     document.onkeyup = function(event) {
         var e = event || window.event;
         var keyCode = e.keyCode || e.which;
+        if (keyCode === 13 && window.stage === 3) {
+            if (!$('#restart').attr('disabled')) {
+                $('#restart').click();
+            }
+        }
         if (!gameStarted) {
             return;
         }
@@ -261,10 +266,6 @@ window.onload = function() {
                 player.stopRotate();
                 roomSocket.emit('stopRotate', id);
                 break;
-            case 13:
-                if (window.stage === 3) {
-                    $('#restart').click();
-                }
         }
     };
 };
