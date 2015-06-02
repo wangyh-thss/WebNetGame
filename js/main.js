@@ -261,6 +261,10 @@ window.onload = function() {
                 player.stopRotate();
                 roomSocket.emit('stopRotate', id);
                 break;
+            case 13:
+                if (window.stage === 3) {
+                    $('#restart').click();
+                }
         }
     };
 }; 
