@@ -514,10 +514,10 @@ var Map = {
         var canvasWidth = this.canvas.width;
         var canvasHeight = this.canvas.height;
 
-        this.context.fillStyle = "#ffffff";
+        this.context.fillStyle = "#f9f8ee";
         this.context.fillRect(0, 0, canvasWidth, canvasHeight);
-        this.context.fillStyle = "#334466";
-        this.context.strokeStyle = "#334466";
+        this.context.fillStyle = "#776e65";
+        this.context.strokeStyle = "#776e65";
         this.context.font = "12px Arial";
         this.context.lineWidth = wallWidth;
 

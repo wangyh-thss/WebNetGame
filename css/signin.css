@@ -55,6 +55,7 @@ body {
 }
 
 #footer p {
+  padding-top: 30px;
   font-family: 'American Typewriter' sans-serif "consolas";
   text-align: center;
 }
