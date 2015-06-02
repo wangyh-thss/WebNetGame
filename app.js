@@ -31,16 +31,8 @@ io.on('connection', function (socket) {
                     roomName = RandomString(10);
                 } while (roomName in player);
                 onNewNameSpace(roomName);
-                score[roomName].push({
-                    'name': free_name,
-                    'score': 0
-                });
-                score[roomName].push({
-                    'name': data.userName || RandomString(5),
-                    'score': 0
-                });
-                socket.emit('join room', {roomName: roomName});
-                free_user[0].emit('join room', {roomName: roomName});
+                socket.emit('join room', {roomName: roomName, userName: data.userName || RandomString(5)});
+                free_user[0].emit('join room', {roomName: roomName, userName: free_name});
                 free_user.splice(0, 1);
             } else {
                 free_user.push(socket);
@@ -51,12 +43,8 @@ io.on('connection', function (socket) {
             if (!player[data.roomName] || player[data.roomName].length == 0) {
                 onNewNameSpace(data.roomName);
             }
-            score[data.roomName].push({
-                'name': data.userName || RandomString(5),
-                'score': 0
-            });
             if (player[data.roomName].length < 2) {
-                socket.emit('join room', {roomName: data.roomName});
+                socket.emit('join room', {roomName: data.roomName, userName: data.userName || RandomString(5)});
             } else {
                 socket.emit('join room', {err: 'room full'});
             }
@@ -78,29 +66,35 @@ function onNewNameSpace(namespace) {
     score[namespace] = [];
     maze[namespace] = createNewMaze();
     io.of('/' + namespace).on('connection', function(socket) {
-        for (var i = 0; i < player[namespace].length; i++) {
-            if (player[namespace][i] == socket) {
+        socket.on('enter room', function(data) {
+            for (var i = 0; i < player[namespace].length; i++) {
+                if (player[namespace][i] == socket) {
+                    return;
+                }
+            }
+            if (player[namespace].length < 2) {
+                player[namespace].push(socket);
+                player_ready[namespace]++;
+                score[namespace].push({
+                    'name': data.userName,
+                    'score': 0
+                });
+                socket.emit('init', {
+                    maze: maze[namespace],
+                    player: player[namespace].length
+                });
+                console.log('connect:' + player[namespace].length);
+            } else {
                 return;
             }
-        }
-        if (player[namespace].length < 2) {
-            player[namespace].push(socket);
-            player_ready[namespace]++;
-            socket.emit('init', {
-                maze: maze[namespace],
-                player: player[namespace].length
-            });
-            console.log('connect:' + player[namespace].length);
-        } else {
-            return;
-        }
 
-        if (player[namespace].length == 2) {
-            io.of('/' + namespace).emit('start', {
-                'maze': maze[namespace],
-                'score': score[namespace]
-            });
-        }
+            if (player[namespace].length == 2) {
+                io.of('/' + namespace).emit('start', {
+                    'maze': maze[namespace],
+                    'score': score[namespace]
+                });
+            }
+        });
 
         socket.on('fire', function(id) {
             socket.broadcast.emit('fire', id);
@@ -130,6 +124,7 @@ function onNewNameSpace(namespace) {
             for (var i = 0; i < player[namespace].length; i++) {
                 if (player[namespace][i] == socket) {
                     player[namespace].splice(i, 1);
+                    score[namespace].splice(i, 1);
                     break;
                 }
             }

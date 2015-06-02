@@ -152,6 +152,8 @@ window.onload = function() {
             clearInterval(painterTimer);
         });
 
+        roomSocket.emit('enter room', {userName: data.userName});
+
         gameover = function() {
             map = undefined;
             for (var i = 0; i < playerArray.length; i++) {
@@ -181,7 +183,7 @@ window.onload = function() {
             roomSocket.emit('restart', id);
         }
         $('#restart').attr('disabled', true);
-    })
+    });
 
     document.onkeydown = function(event) {
         var e = event || window.event;
